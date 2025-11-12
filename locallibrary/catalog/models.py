@@ -36,7 +36,7 @@ class Book(models.Model):
 
     title = models.CharField(max_length=200)
     author = models.ForeignKey("Author", on_delete=models.SET_NULL, null=True)
-    description = models.TextField(
+    summary = models.TextField(
         max_length=1000,
         help_text="Enter a brief description of the book"
     )
@@ -52,6 +52,14 @@ class Book(models.Model):
 
     def get_absolute_url(self):
         return reverse("book-detail", args=[str(self.id)])
+
+    def display_genre(self):
+        """
+        Creates a string for the Genre. This is required to display genre in Admin.
+        """
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
+
+    display_genre.short_description = 'Genre'
 
 
 class BookInstance(models.Model):
@@ -86,6 +94,10 @@ class BookInstance(models.Model):
         # ❗ Исправление: BookInstance не имеет полей first_name/last_name!
         return f"{self.book.title} ({self.id})"
 
+    def display_title(self):
+        return self.book.title
+    display_title.short_description = 'Title'
+
 
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
@@ -97,4 +109,4 @@ class Author(models.Model):
         return reverse("author-detail", args=[str(self.id)])
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name}"
+        return f"{self.last_name} {self.first_name}"
