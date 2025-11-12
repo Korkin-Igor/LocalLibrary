@@ -1,5 +1,8 @@
 from django.db import models
 from django.urls import reverse
+from django.db.models import UniqueConstraint
+from django.db.models.functions import Lower
+from django.urls import reverse
 import uuid
 
 
@@ -30,6 +33,23 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+class Language(models.Model):
+    name = models.CharField(max_length=200, help_text="Enter language")
+
+    def __str__(self):
+        return self.name
+
+    def get_absolute_url(self):
+        return reverse("language-detail-view", args=[str(self.id)])
+
+    class Meta:
+        constraints = [
+            UniqueConstraint(
+                Lower("name"),
+                name="language_name_lower_uniq",
+                violation_error_message="Language with this name already exists (case-insensitive)."
+            )
+        ]
 
 class Book(models.Model):
     """Модель, представляющая книгу (но не конкретный экземпляр)."""
@@ -46,6 +66,7 @@ class Book(models.Model):
         help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>'
     )
     genre = models.ManyToManyField(Genre, help_text="Select a genre for this book")
+    language = models.ForeignKey('Language', on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.title
@@ -97,7 +118,6 @@ class BookInstance(models.Model):
     def display_title(self):
         return self.book.title
     display_title.short_description = 'Title'
-
 
 class Author(models.Model):
     first_name = models.CharField(max_length=100)
