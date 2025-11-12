@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block title %}
+<title>Detail view author - Local Library</title>
+{% endblock %}
+
+{% block content %}
+  <p><strong>First name:</strong> {{ author.first_name }}</p>
+  <p><strong>Last name:</strong> {{ author.last_name }}</p>
+  <p><strong>Date of birth:</strong> {{ author.date_of_birth }}</p>
+  <p><strong>Date of death:</strong> {{ author.date_of_death }}</p>
+{% endblock %}
