@@ -1,6 +1,10 @@
 from django.shortcuts import render
 from .models import Book, Author, BookInstance, Genre
 from django.views import generic
+from django.shortcuts import redirect
+
+def home_redirect(request):
+    return redirect('catalog/')
 
 def index(request):
     search_word = request.GET.get('search_word', '')  # ← получаем ДО context
