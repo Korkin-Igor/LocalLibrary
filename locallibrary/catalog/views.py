@@ -42,3 +42,7 @@ class BookDetailView(generic.DetailView):
     template_name = 'books/book_detail.html'
     def get_queryset(self):
         return Book.objects.filter(title__icontains='war')
+
+class AuthorListView(generic.ListView):
+    model = Author
+    context_object_name = 'author_list'
