@@ -13,6 +13,9 @@ def index(request):
     num_genres = Genre.objects.count()
     num_books_with_word = Book.objects.filter(title__icontains=search_word).count()
 
+    num_visits = request.session.get('num_visits', 0)
+    request.session['num_visits'] = num_visits + 1
+
     context = {
         'num_books': num_books,
         'num_instances': num_instances,
@@ -20,11 +23,10 @@ def index(request):
         'num_authors': num_authors,
         'num_genres': num_genres,
         'num_books_with_word': num_books_with_word,
-        'search_word': search_word,  # ← теперь переменная точно определена
+        'search_word': search_word,
+        'num_visits': num_visits,
     }
 
-    # Отрисовка HTML-шаблона index.html с данными внутри
-    # переменной контекста context
     return render(
         request,
         'index.html',
@@ -33,7 +35,7 @@ def index(request):
 
 class BookListView(generic.ListView):
     model = Book
-    context_object_name = 'book_list'   # ваше собственное имя переменной контекста в шаблоне
+    context_object_name = 'book_list'
     paginate_by = 2
 
     def get_context_data(self, **kwargs):
