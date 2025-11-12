@@ -25,6 +25,7 @@ class BookListView(generic.ListView):
     model = Book
     context_object_name = 'book_list'   # ваше собственное имя переменной контекста в шаблоне
     template_name = 'books/book_list.html'  # Определение имени вашего шаблона и его расположения
+    paginate_by = 2
 
     # def get_queryset(self):
     #     return Book.objects.filter(title__icontains='war')[:5]  # Получить 5 книг, содержащих 'war' в заголовке
