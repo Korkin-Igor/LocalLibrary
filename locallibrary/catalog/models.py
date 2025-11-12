@@ -4,27 +4,26 @@ from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
 from django.urls import reverse
 import uuid
+from django.contrib.auth.models import User
+from datetime import date
 
-
-class MyModelName(models.Model):
-    """Типичный класс модели, производный от класса Model."""
-
-    my_field_name = models.CharField(max_length=20, help_text="Введите описание поля")
-
-    class Meta:
-        ordering = ["-my_field_name"]
-
-    def get_absolute_url(self):
-        """Возвращает URL-адрес для доступа к определённому экземпляру MyModelName."""
-        return reverse("model-detail-view", args=[str(self.id)])
-
-    def __str__(self):
-        return self.my_field_name
+# class MyModelName(models.Model):
+#     """Типичный класс модели, производный от класса Model."""
+#
+#     my_field_name = models.CharField(max_length=20, help_text="Введите описание поля")
+#
+#     class Meta:
+#         ordering = ["-my_field_name"]
+#
+#     def get_absolute_url(self):
+#         """Возвращает URL-адрес для доступа к определённому экземпляру MyModelName."""
+#         return reverse("model-detail-view", args=[str(self.id)])
+#
+#     def __str__(self):
+#         return self.my_field_name
 
 
 class Genre(models.Model):
-    """Модель, представляющая жанр книги (например, научная фантастика, документалистика)."""
-
     name = models.CharField(
         max_length=200,
         help_text="Введите жанр"
@@ -52,8 +51,6 @@ class Language(models.Model):
         ]
 
 class Book(models.Model):
-    """Модель, представляющая книгу (но не конкретный экземпляр)."""
-
     title = models.CharField(max_length=200)
     author = models.ForeignKey("Author", on_delete=models.SET_NULL, null=True)
     summary = models.TextField(
@@ -92,6 +89,7 @@ class BookInstance(models.Model):
     book = models.ForeignKey("Book", on_delete=models.SET_NULL, null=True)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     LOAN_STATUS = (
         ("m", "Maintenance"),
@@ -117,6 +115,13 @@ class BookInstance(models.Model):
 
     def display_title(self):
         return self.book.title
+
+    @property
+    def is_overdue(self):
+        if self.due_back and date.today() > self.due_back:
+            return True
+        return False
+
     display_title.short_description = 'Title'
 
 class Author(models.Model):
