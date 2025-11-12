@@ -3,14 +3,34 @@ from .models import Author, Genre, Book, BookInstance
 
 @admin.register(Author)
 class AuthorAdmin(admin.ModelAdmin):
-    list_display = ('last_name', 'first_name', 'date_of_birth', 'date_of_death')
+    fieldsets = (
+        ('Name', {
+            'fields': ('first_name', 'last_name')
+        }),
+        ('Dates', {
+            'fields': ('date_of_birth', 'date_of_death')
+        })
+    )
+
+@admin.register(BookInstance)
+class BookInstanceAdmin(admin.ModelAdmin):
+    list_filter = ('status', 'due_back')
+
+    fieldsets = (
+        ('About book', {
+            'fields': ('book', 'imprint', 'id')
+        }),
+        ('Availability', {
+            'fields': ('status', 'due_back')
+        }),
+    )
+
+class BooksInstanceInline(admin.StackedInline):
+    model = BookInstance
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'display_genre')
-
-@admin.register(BookInstance)
-class BookInstanceAdmin(admin.ModelAdmin):
-    list_display = ('display_title', 'imprint', 'due_back')
+    inlines = [BooksInstanceInline]
 
 admin.site.register(Genre)
