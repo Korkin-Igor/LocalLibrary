@@ -13,4 +13,6 @@ urlpatterns = [
 
     path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
     path('all_borrowed_books/', views.LoanedBooksByAllUsersListView.as_view(), name='all-borrowed'),
+
+    path('book/<str:pk>/renew/', views.renew_book_librarian, name='renew-book-librarian'),
 ]
